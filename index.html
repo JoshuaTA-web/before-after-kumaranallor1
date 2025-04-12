@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Before-After Slider</title>
+  <link href="https://fonts.googleapis.com/css2?family=Avenir&display=swap" rel="stylesheet">
   <style>
     body {
       display: flex;
@@ -11,6 +12,7 @@
       background: #f2f2f2;
       height: 100vh;
       margin: 0;
+      font-family: 'Avenir', sans-serif;
     }
 
     .container {
@@ -20,36 +22,37 @@
       aspect-ratio: 4624 / 3468;
       overflow: hidden;
       cursor: ew-resize;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
-    .container img {
+    .image-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-wrapper img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
     }
 
-    .before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-
     .after-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
+      width: 50%;
       overflow: hidden;
       z-index: 2;
     }
 
-    .after-wrapper img {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .after-image {
+      position: relative;
+      z-index: 2;
+    }
+
+    .before-image {
+      z-index: 1;
     }
 
     .slider-bar {
@@ -60,16 +63,72 @@
       background: #ffffff;
       z-index: 3;
     }
+
+    .label {
+      position: absolute;
+      top: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 4px;
+      z-index: 4;
+      font-family: 'Avenir', sans-serif;
+    }
+
+    .label-before {
+      left: 10px;
+    }
+
+    .label-after {
+      right: 10px;
+    }
+
+    .arrow {
+      position: absolute;
+      bottom: 10px;
+      font-size: 24px;
+      color: white;
+      background-color: rgba(0,0,0,0.4);
+      padding: 5px 10px;
+      border-radius: 4px;
+      z-index: 4;
+      font-weight: bold;
+    }
+
+    .arrow-left {
+      left: 10px;
+    }
+
+    .arrow-right {
+      right: 10px;
+    }
   </style>
 </head>
 <body>
 
 <div class="container" id="sliderContainer">
-  <img src="before.jpg" class="before" />
-  <div class="after-wrapper" id="afterWrapper">
+  <!-- Before Image -->
+  <div class="image-wrapper before-image">
+    <img src="before.jpg" />
+  </div>
+
+  <!-- After Image -->
+  <div class="image-wrapper after-wrapper" id="afterWrapper">
     <img src="after.jpg" />
   </div>
+
+  <!-- Slider Bar -->
   <div class="slider-bar" id="sliderBar"></div>
+
+  <!-- Labels -->
+  <div class="label label-before">Before</div>
+  <div class="label label-after">After</div>
+
+  <!-- Arrows -->
+  <div class="arrow arrow-left">&#8592; Slide</div>
+  <div class="arrow arrow-right">Slide &#8594;</div>
 </div>
 
 <script>
@@ -84,19 +143,19 @@
     sliderBar.style.left = offset + 'px';
   }
 
-  // Mouse support
+  // Mouse drag
   container.addEventListener('mousedown', () => {
     document.onmousemove = (e) => setSlider(e.clientX);
     document.onmouseup = () => document.onmousemove = null;
   });
 
-  // Touch support
+  // Touch drag
   container.addEventListener('touchstart', (e) => {
     document.ontouchmove = (ev) => setSlider(ev.touches[0].clientX);
     document.ontouchend = () => document.ontouchmove = null;
   });
 
-  // Initialize at center
+  // Start centered
   setSlider(container.offsetWidth / 2);
 </script>
 
