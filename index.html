@@ -3,67 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <title>Before-After Slider</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Avenir&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      background: #f2f2f2;
+      font-family: 'Avenir', sans-serif;
+      background: #eee;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      font-family: 'Montserrat', sans-serif;
     }
 
     .container {
       position: relative;
       width: 90vw;
       max-width: 1000px;
-      aspect-ratio: 4624 / 3468;
+      aspect-ratio: 4 / 3;
       overflow: hidden;
       cursor: ew-resize;
-      background: #000;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      background-color: #000;
     }
 
-    .image-layer {
+    .image {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .image-layer img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      display: block;
     }
 
-    .after-mask {
+    .after-container {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
-      overflow: hidden;
-      z-index: 2;
       width: 50%;
-    }
-
-    .after-mask img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      overflow: hidden;
     }
 
     .slider-bar {
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: 3px;
       background: white;
-      z-index: 3;
+      z-index: 10;
     }
 
     .label {
@@ -71,11 +57,11 @@
       top: 10px;
       font-weight: bold;
       font-size: 18px;
-      background-color: rgba(0,0,0,0.5);
-      color: white;
-      padding: 5px 12px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 5px 10px;
       border-radius: 4px;
-      z-index: 4;
+      z-index: 11;
     }
 
     .label-before {
@@ -90,12 +76,11 @@
       position: absolute;
       bottom: 10px;
       font-size: 20px;
-      color: white;
-      background-color: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
       padding: 5px 10px;
       border-radius: 4px;
-      z-index: 4;
-      font-weight: bold;
+      z-index: 11;
     }
 
     .arrow-left {
@@ -110,17 +95,15 @@
 <body>
 
 <div class="container" id="sliderContainer">
-  <!-- Before Layer -->
-  <div class="image-layer">
-    <img src="before.jpg" alt="Before">
+  <!-- Before Image -->
+  <img src="before.jpg" class="image" alt="Before">
+
+  <!-- After Image in Clipping Container -->
+  <div class="after-container" id="afterContainer">
+    <img src="after.jpg" class="image" alt="After">
   </div>
 
-  <!-- After Layer (clipped) -->
-  <div class="after-mask" id="afterMask">
-    <img src="after.jpg" alt="After">
-  </div>
-
-  <!-- Slider Handle -->
+  <!-- Slider Bar -->
   <div class="slider-bar" id="sliderBar"></div>
 
   <!-- Labels -->
@@ -134,30 +117,28 @@
 
 <script>
   const container = document.getElementById('sliderContainer');
-  const afterMask = document.getElementById('afterMask');
+  const afterContainer = document.getElementById('afterContainer');
   const sliderBar = document.getElementById('sliderBar');
 
-  function setSlider(x) {
+  function updateSlider(x) {
     const rect = container.getBoundingClientRect();
-    const offset = Math.max(0, Math.min(x - rect.left, rect.width));
-    afterMask.style.width = offset + 'px';
+    const offset = Math.min(Math.max(0, x - rect.left), rect.width);
+    afterContainer.style.width = offset + 'px';
     sliderBar.style.left = offset + 'px';
   }
 
-  // Mouse
   container.addEventListener('mousedown', () => {
-    document.onmousemove = (e) => setSlider(e.clientX);
+    document.onmousemove = e => updateSlider(e.clientX);
     document.onmouseup = () => document.onmousemove = null;
   });
 
-  // Touch
-  container.addEventListener('touchstart', (e) => {
-    document.ontouchmove = (ev) => setSlider(ev.touches[0].clientX);
+  container.addEventListener('touchstart', () => {
+    document.ontouchmove = e => updateSlider(e.touches[0].clientX);
     document.ontouchend = () => document.ontouchmove = null;
   });
 
-  // Init
-  setSlider(container.offsetWidth / 2);
+  // Set initial position at 50%
+  window.onload = () => updateSlider(container.offsetWidth / 2);
 </script>
 
 </body>
