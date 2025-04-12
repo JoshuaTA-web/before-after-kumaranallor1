@@ -2,85 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Before-After Slider</title>
-  <link href="https://fonts.googleapis.com/css2?family=Avenir&display=swap" rel="stylesheet">
+  <title>Before After Slider</title>
   <style>
     body {
       margin: 0;
       font-family: 'Avenir', sans-serif;
-      background: #eee;
       display: flex;
       justify-content: center;
       align-items: center;
+      background: #f3f3f3;
       height: 100vh;
     }
 
-    .container {
+    .slider-container {
       position: relative;
       width: 90vw;
-      max-width: 1000px;
-      aspect-ratio: 4 / 3;
+      max-width: 900px;
       overflow: hidden;
-      cursor: ew-resize;
-      background-color: #000;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
-    .image {
+    .after-image, .before-image {
       position: absolute;
       top: 0;
       left: 0;
+      height: auto;
       width: 100%;
-      height: 100%;
       object-fit: contain;
+      display: block;
     }
 
-    .after-container {
+    .before-wrapper {
       position: absolute;
       top: 0;
       left: 0;
-      height: 100%;
       width: 50%;
+      height: 100%;
       overflow: hidden;
     }
 
-    .slider-bar {
+    .slider-line {
       position: absolute;
       top: 0;
       bottom: 0;
+      left: 50%;
       width: 3px;
-      background: white;
+      background: #fff;
       z-index: 10;
+      cursor: ew-resize;
     }
 
     .label {
       position: absolute;
       top: 10px;
+      color: white;
       font-weight: bold;
       font-size: 18px;
-      background: rgba(0, 0, 0, 0.5);
-      color: #fff;
+      background: rgba(0,0,0,0.6);
       padding: 5px 10px;
-      border-radius: 4px;
-      z-index: 11;
+      border-radius: 5px;
+      z-index: 20;
+      font-family: 'Avenir', sans-serif;
     }
 
-    .label-before {
+    .label.before {
       left: 10px;
     }
 
-    .label-after {
+    .label.after {
       right: 10px;
     }
 
-    .arrow {
+    .arrow-left, .arrow-right {
       position: absolute;
       bottom: 10px;
       font-size: 20px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      padding: 5px 10px;
+      color: white;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 4px 8px;
       border-radius: 4px;
-      z-index: 11;
     }
 
     .arrow-left {
@@ -93,53 +94,54 @@
   </style>
 </head>
 <body>
-
-<div class="container" id="sliderContainer">
-  <!-- Before Image -->
-  <img src="before.jpg" class="image" alt="Before">
-
-  <!-- After Image in Clipping Container -->
-  <div class="after-container" id="afterContainer">
-    <img src="after.jpg" class="image" alt="After">
+  <div class="slider-container" id="slider">
+    <img src="after.jpg" alt="After" class="after-image">
+    <div class="before-wrapper" id="beforeWrapper">
+      <img src="before.jpg" alt="Before" class="before-image">
+    </div>
+    <div class="slider-line" id="sliderLine"></div>
+    <div class="label before">Before</div>
+    <div class="label after">After</div>
+    <div class="arrow-left">← Slide</div>
+    <div class="arrow-right">Slide →</div>
   </div>
 
-  <!-- Slider Bar -->
-  <div class="slider-bar" id="sliderBar"></div>
+  <script>
+    const slider = document.getElementById('slider');
+    const beforeWrapper = document.getElementById('beforeWrapper');
+    const sliderLine = document.getElementById('sliderLine');
 
-  <!-- Labels -->
-  <div class="label label-before">Before</div>
-  <div class="label label-after">After</div>
+    let isDragging = false;
 
-  <!-- Arrows -->
-  <div class="arrow arrow-left">&#8592; Slide</div>
-  <div class="arrow arrow-right">Slide &#8594;</div>
-</div>
+    sliderLine.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
 
-<script>
-  const container = document.getElementById('sliderContainer');
-  const afterContainer = document.getElementById('afterContainer');
-  const sliderBar = document.getElementById('sliderBar');
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = slider.getBoundingClientRect();
+      let offsetX = e.clientX - rect.left;
 
-  function updateSlider(x) {
-    const rect = container.getBoundingClientRect();
-    const offset = Math.min(Math.max(0, x - rect.left), rect.width);
-    afterContainer.style.width = offset + 'px';
-    sliderBar.style.left = offset + 'px';
-  }
+      if (offsetX < 0) offsetX = 0;
+      if (offsetX > rect.width) offsetX = rect.width;
 
-  container.addEventListener('mousedown', () => {
-    document.onmousemove = e => updateSlider(e.clientX);
-    document.onmouseup = () => document.onmousemove = null;
-  });
+      beforeWrapper.style.width = offsetX + 'px';
+      sliderLine.style.left = offsetX + 'px';
+    });
 
-  container.addEventListener('touchstart', () => {
-    document.ontouchmove = e => updateSlider(e.touches[0].clientX);
-    document.ontouchend = () => document.ontouchmove = null;
-  });
+    // Mobile touch
+    sliderLine.addEventListener('touchstart', () => isDragging = true);
+    window.addEventListener('touchend', () => isDragging = false);
+    slider.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const rect = slider.getBoundingClientRect();
+      let offsetX = e.touches[0].clientX - rect.left;
 
-  // Set initial position at 50%
-  window.onload = () => updateSlider(container.offsetWidth / 2);
-</script>
+      if (offsetX < 0) offsetX = 0;
+      if (offsetX > rect.width) offsetX = rect.width;
 
+      beforeWrapper.style.width = offsetX + 'px';
+      sliderLine.style.left = offsetX + 'px';
+    });
+  </script>
 </body>
 </html>
