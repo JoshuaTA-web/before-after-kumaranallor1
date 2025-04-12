@@ -22,17 +22,23 @@
       aspect-ratio: 4624 / 3468;
       overflow: hidden;
       cursor: ew-resize;
+      background: #000;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
-    .image-wrapper,
-    .image-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    .image-layer {
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
     }
 
     .after-mask {
@@ -42,7 +48,13 @@
       height: 100%;
       overflow: hidden;
       z-index: 2;
-      pointer-events: none;
+      width: 50%;
+    }
+
+    .after-mask img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .slider-bar {
@@ -50,7 +62,7 @@
       top: 0;
       bottom: 0;
       width: 4px;
-      background: #fff;
+      background: white;
       z-index: 3;
     }
 
@@ -77,7 +89,7 @@
     .arrow {
       position: absolute;
       bottom: 10px;
-      font-size: 22px;
+      font-size: 20px;
       color: white;
       background-color: rgba(0,0,0,0.4);
       padding: 5px 10px;
@@ -98,17 +110,17 @@
 <body>
 
 <div class="container" id="sliderContainer">
-  <!-- Before Image -->
-  <div class="image-wrapper">
-    <img src="before.jpg" />
+  <!-- Before Layer -->
+  <div class="image-layer">
+    <img src="before.jpg" alt="Before">
   </div>
 
-  <!-- After Mask (with full-size image inside) -->
+  <!-- After Layer (clipped) -->
   <div class="after-mask" id="afterMask">
-    <img src="after.jpg" />
+    <img src="after.jpg" alt="After">
   </div>
 
-  <!-- Slider Bar -->
+  <!-- Slider Handle -->
   <div class="slider-bar" id="sliderBar"></div>
 
   <!-- Labels -->
@@ -132,19 +144,19 @@
     sliderBar.style.left = offset + 'px';
   }
 
-  // Mouse drag
+  // Mouse
   container.addEventListener('mousedown', () => {
     document.onmousemove = (e) => setSlider(e.clientX);
     document.onmouseup = () => document.onmousemove = null;
   });
 
-  // Touch drag
+  // Touch
   container.addEventListener('touchstart', (e) => {
     document.ontouchmove = (ev) => setSlider(ev.touches[0].clientX);
     document.ontouchend = () => document.ontouchmove = null;
   });
 
-  // Initialize center
+  // Init
   setSlider(container.offsetWidth / 2);
 </script>
 
