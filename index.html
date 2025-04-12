@@ -7,113 +7,113 @@
     body {
       margin: 0;
       font-family: 'Avenir', sans-serif;
+      background: #f3f3f3;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f3f3f3;
       height: 100vh;
     }
 
     .slider-container {
       position: relative;
-      width: 90vw;
-      max-width: 900px;
+      width: 800px;
+      max-width: 90vw;
       overflow: hidden;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
-    .after-image, .before-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: auto;
+    .slider-container img {
       width: 100%;
-      object-fit: contain;
+      height: auto;
       display: block;
     }
 
-    .before-wrapper {
+    .after-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .before-image-wrapper {
       position: absolute;
       top: 0;
       left: 0;
       width: 50%;
       height: 100%;
       overflow: hidden;
+      z-index: 2;
     }
 
-    .slider-line {
+    .before-image-wrapper img {
+      width: 100%;
+      height: auto;
+    }
+
+    .slider-handle {
       position: absolute;
       top: 0;
       bottom: 0;
       left: 50%;
       width: 3px;
-      background: #fff;
-      z-index: 10;
+      background: white;
       cursor: ew-resize;
+      z-index: 3;
     }
 
     .label {
       position: absolute;
       top: 10px;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.6);
       color: white;
       font-weight: bold;
-      font-size: 18px;
-      background: rgba(0,0,0,0.6);
-      padding: 5px 10px;
+      font-size: 16px;
       border-radius: 5px;
-      z-index: 20;
       font-family: 'Avenir', sans-serif;
+      z-index: 4;
     }
 
-    .label.before {
-      left: 10px;
-    }
-
-    .label.after {
-      right: 10px;
-    }
+    .label.before { left: 10px; }
+    .label.after { right: 10px; }
 
     .arrow-left, .arrow-right {
       position: absolute;
       bottom: 10px;
-      font-size: 20px;
+      font-size: 18px;
       color: white;
       background: rgba(0, 0, 0, 0.6);
       padding: 4px 8px;
       border-radius: 4px;
+      z-index: 4;
     }
 
-    .arrow-left {
-      left: 10px;
-    }
-
-    .arrow-right {
-      right: 10px;
-    }
+    .arrow-left { left: 10px; }
+    .arrow-right { right: 10px; }
   </style>
 </head>
 <body>
   <div class="slider-container" id="slider">
-    <img src="after.jpg" alt="After" class="after-image">
-    <div class="before-wrapper" id="beforeWrapper">
-      <img src="before.jpg" alt="Before" class="before-image">
+    <img src="after.jpg" class="after-image">
+    <div class="before-image-wrapper" id="beforeWrapper">
+      <img src="before.jpg" class="before-image">
     </div>
-    <div class="slider-line" id="sliderLine"></div>
+    <div class="slider-handle" id="sliderHandle"></div>
+
     <div class="label before">Before</div>
     <div class="label after">After</div>
-    <div class="arrow-left">← Slide</div>
-    <div class="arrow-right">Slide →</div>
+    <div class="arrow-left">←</div>
+    <div class="arrow-right">→</div>
   </div>
 
   <script>
     const slider = document.getElementById('slider');
+    const handle = document.getElementById('sliderHandle');
     const beforeWrapper = document.getElementById('beforeWrapper');
-    const sliderLine = document.getElementById('sliderLine');
 
     let isDragging = false;
 
-    sliderLine.addEventListener('mousedown', () => isDragging = true);
+    handle.addEventListener('mousedown', () => isDragging = true);
     window.addEventListener('mouseup', () => isDragging = false);
 
     slider.addEventListener('mousemove', (e) => {
@@ -121,26 +121,22 @@
       const rect = slider.getBoundingClientRect();
       let offsetX = e.clientX - rect.left;
 
-      if (offsetX < 0) offsetX = 0;
-      if (offsetX > rect.width) offsetX = rect.width;
-
+      offsetX = Math.max(0, Math.min(offsetX, rect.width));
       beforeWrapper.style.width = offsetX + 'px';
-      sliderLine.style.left = offsetX + 'px';
+      handle.style.left = offsetX + 'px';
     });
 
-    // Mobile touch
-    sliderLine.addEventListener('touchstart', () => isDragging = true);
+    // Touch support
+    handle.addEventListener('touchstart', () => isDragging = true);
     window.addEventListener('touchend', () => isDragging = false);
     slider.addEventListener('touchmove', (e) => {
       if (!isDragging) return;
       const rect = slider.getBoundingClientRect();
       let offsetX = e.touches[0].clientX - rect.left;
 
-      if (offsetX < 0) offsetX = 0;
-      if (offsetX > rect.width) offsetX = rect.width;
-
+      offsetX = Math.max(0, Math.min(offsetX, rect.width));
       beforeWrapper.style.width = offsetX + 'px';
-      sliderLine.style.left = offsetX + 'px';
+      handle.style.left = offsetX + 'px';
     });
   </script>
 </body>
