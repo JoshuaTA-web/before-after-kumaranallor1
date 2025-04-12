@@ -2,28 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Before-After Slider</title>
+  <title>Full-Size Before-After Slider</title>
   <style>
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      margin: 0;
+      padding: 0;
       background: #111;
+      overflow: auto;
+    }
+
+    .outer-wrapper {
+      width: 100%;
+      overflow-x: auto;
     }
 
     .container {
       position: relative;
-      width: 600px;
-      height: 400px;
-      overflow: hidden;
+      width: 4624px;
+      height: 3468px;
+      margin: 20px auto;
       cursor: ew-resize;
     }
 
     .container img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
       display: block;
     }
 
@@ -61,12 +64,14 @@
 </head>
 <body>
 
-<div class="container" id="sliderContainer">
-  <img src="before.jpg" class="before" />
-  <div class="after-wrapper" id="afterWrapper">
-    <img src="after.jpg" />
+<div class="outer-wrapper">
+  <div class="container" id="sliderContainer">
+    <img src="before.jpg" class="before" />
+    <div class="after-wrapper" id="afterWrapper">
+      <img src="after.jpg" />
+    </div>
+    <div class="slider-bar" id="sliderBar"></div>
   </div>
-  <div class="slider-bar" id="sliderBar"></div>
 </div>
 
 <script>
@@ -93,7 +98,7 @@
     document.ontouchend = () => document.ontouchmove = null;
   });
 
-  // Initialize
+  // Initialize at center
   setSlider(container.offsetWidth / 2);
 </script>
 
