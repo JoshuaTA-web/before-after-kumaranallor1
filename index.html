@@ -2,39 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Before-After Slider</title>
   <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #111;
+    }
+
     .container {
       position: relative;
       width: 600px;
       height: 400px;
       overflow: hidden;
+      cursor: ew-resize;
     }
-    .before, .after {
+
+    .container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .after-wrapper {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
-    }
-    .before {
-      width: 100%;
-    }
-    .after {
-      width: 50%;
       overflow: hidden;
+      z-index: 2;
     }
-    .after img {
-      position: relative;
-      left: -50%;
+
+    .after-wrapper img {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
-    .slider {
+
+    .slider-bar {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 50%;
       width: 4px;
-      background: #fff;
-      cursor: ew-resize;
-      z-index: 2;
+      background: #ffffff;
+      z-index: 3;
     }
   </style>
 </head>
@@ -42,28 +63,38 @@
 
 <div class="container" id="sliderContainer">
   <img src="before.jpg" class="before" />
-  <div class="after">
+  <div class="after-wrapper" id="afterWrapper">
     <img src="after.jpg" />
   </div>
-  <div class="slider" id="slider"></div>
+  <div class="slider-bar" id="sliderBar"></div>
 </div>
 
 <script>
-  const slider = document.getElementById('slider');
   const container = document.getElementById('sliderContainer');
-  const after = container.querySelector('.after');
+  const afterWrapper = document.getElementById('afterWrapper');
+  const sliderBar = document.getElementById('sliderBar');
 
-  slider.onmousedown = function(e) {
-    document.onmousemove = function(e) {
-      const rect = container.getBoundingClientRect();
-      let offset = e.clientX - rect.left;
-      if (offset < 0) offset = 0;
-      if (offset > rect.width) offset = rect.width;
-      slider.style.left = offset + "px";
-      after.style.width = offset + "px";
-    }
+  function setSlider(x) {
+    const rect = container.getBoundingClientRect();
+    const offset = Math.max(0, Math.min(x - rect.left, rect.width));
+    afterWrapper.style.width = offset + 'px';
+    sliderBar.style.left = offset + 'px';
+  }
+
+  // Mouse support
+  container.addEventListener('mousedown', () => {
+    document.onmousemove = (e) => setSlider(e.clientX);
     document.onmouseup = () => document.onmousemove = null;
-  };
+  });
+
+  // Touch support
+  container.addEventListener('touchstart', (e) => {
+    document.ontouchmove = (ev) => setSlider(ev.touches[0].clientX);
+    document.ontouchend = () => document.ontouchmove = null;
+  });
+
+  // Initialize
+  setSlider(container.offsetWidth / 2);
 </script>
 
 </body>
