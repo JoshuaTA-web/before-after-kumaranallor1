@@ -47,28 +47,36 @@
       height: 100%;
       background: white;
       z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .label, .arrow {
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 6px 10px;
+      border-radius: 6px;
+      user-select: none;
+      font-family: Avenir, sans-serif;
+    }
+
+    .label {
       position: absolute;
       top: 15px;
+      left: 15px;
       padding: 6px 14px;
       font-weight: bold;
       font-size: 18px;
       color: white;
       background: rgba(0, 0, 0, 0.5);
       font-family: Avenir, sans-serif;
-      transition: opacity 0.3s ease;
       z-index: 4;
-    }
-
-    .label {
-      left: 15px;
-    }
-
-    .arrow {
-      right: 15px;
-      font-size: 22px;
     }
   </style>
 </head>
@@ -78,9 +86,10 @@
     <div class="after-wrapper" id="after-wrapper">
       <img src="after.jpg" alt="After" id="after-image">
     </div>
-    <div class="slider" id="slider"></div>
+    <div class="slider" id="slider">
+      <div class="slider-arrow" id="slider-arrow">▶</div>
+    </div>
     <div class="label" id="label">Before</div>
-    <div class="arrow" id="arrow">⇢</div>
   </div>
 
   <script>
@@ -88,7 +97,7 @@
     const afterWrapper = document.getElementById("after-wrapper");
     const container = document.getElementById("slider-container");
     const label = document.getElementById("label");
-    const arrow = document.getElementById("arrow");
+    const arrow = document.getElementById("slider-arrow");
 
     container.addEventListener("mousemove", (e) => {
       const rect = container.getBoundingClientRect();
@@ -99,17 +108,17 @@
       slider.style.left = `${posX}px`;
       afterWrapper.style.width = `${posX}px`;
 
-      // Update label and arrow
+      // Label and arrow direction update
       if (percent < 0.5) {
         label.textContent = "Before";
-        arrow.textContent = "⇢";
+        arrow.textContent = "▶"; // pointing right
       } else {
         label.textContent = "After";
-        arrow.textContent = "⇠";
+        arrow.textContent = "◀"; // pointing left
       }
     });
 
-    // Initial state
+    // Set initial position
     const initX = container.getBoundingClientRect().width / 2;
     slider.style.left = `${initX}px`;
     afterWrapper.style.width = `${initX}px`;
