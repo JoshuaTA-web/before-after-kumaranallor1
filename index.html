@@ -4,28 +4,32 @@
   <meta charset="UTF-8" />
   <title>Before After Slider</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      background: #111;
       font-family: 'Avenir', sans-serif;
+      background: transparent;
     }
 
-    .slider-container {
-      position: relative;
+    .slider-wrapper {
+      width: 100%;
       max-width: 1000px;
-      margin: 40px auto;
+      margin: 0 auto;
       aspect-ratio: 4 / 3;
+      position: relative;
       overflow: hidden;
-      cursor: ew-resize;
     }
 
-    .slider-container img {
+    .slider-wrapper img {
       position: absolute;
-      top: 0;
-      left: 0;
       height: 100%;
       width: auto;
       object-fit: contain;
+      top: 0;
+      left: 0;
     }
 
     .after-wrapper {
@@ -81,7 +85,7 @@
   </style>
 </head>
 <body>
-  <div class="slider-container" id="slider-container">
+  <div class="slider-wrapper" id="slider-container">
     <img src="before.jpg" alt="Before">
     <div class="after-wrapper" id="after-wrapper">
       <img src="after.jpg" alt="After" id="after-image">
@@ -108,20 +112,20 @@
       slider.style.left = `${posX}px`;
       afterWrapper.style.width = `${posX}px`;
 
-      // Label and arrow direction update
       if (percent < 0.5) {
         label.textContent = "Before";
-        arrow.textContent = "▶"; // pointing right
+        arrow.textContent = "▶";
       } else {
         label.textContent = "After";
-        arrow.textContent = "◀"; // pointing left
+        arrow.textContent = "◀";
       }
     });
 
-    // Set initial position
-    const initX = container.getBoundingClientRect().width / 2;
-    slider.style.left = `${initX}px`;
-    afterWrapper.style.width = `${initX}px`;
+    window.addEventListener("load", () => {
+      const initX = container.getBoundingClientRect().width / 2;
+      slider.style.left = `${initX}px`;
+      afterWrapper.style.width = `${initX}px`;
+    });
   </script>
 </body>
 </html>
